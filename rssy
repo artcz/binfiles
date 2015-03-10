@@ -16,13 +16,11 @@ FEEDS = [
 
 def parse_feed(url):
     items = feedparser.parse(url)["items"]
-    RETURN = [{
+    return [{
         "title": item["title"],
         "link": item["link"].split("utm_source")[0],
         "date": item["published"]
     } for item in items[:3]]
-
-    return RETURN
 
 
 def print_item(item):
