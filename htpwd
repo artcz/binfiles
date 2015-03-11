@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+"""
+Simple script to generate .htpasswd files, using passlib
+"""
+
+from __future__ import unicode_literals
+
+import sys
+
+from passlib.apache import HtpasswdFile as HF
+
+
+if __name__ == "__main__":
+    try:
+        htpasswd = HF(sys.argv[1])
+    except IOError:
+        htpasswd = HF(sys.argv[1], new=True)
+
+    htpasswd.set_password(sys.argv[2], sys.argv[3])
+    htpasswd.save()
