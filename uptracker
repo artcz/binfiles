@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+Small script that checks if the url is up/working.
+
+BONUS: can check if string appears in the content of the page
+
+Requires python3
+
+Version: 0.2
+"""
+
+import sys
+import requests
+from termcolor import colored
+
+
+URLS = {
+    "apps": [
+        "127.0.0.1:8000",
+        "wstaw.org",
+        "wklej.org;Dodaj",
+        "wstaw.org;Doesn'texist",
+    ],
+
+    "wordpress": [
+        "forgottenlabs.com",
+        "https://forgottenlabs.com",
+    ],
+}
+
+
+def delta_to_str(delta):
+    return "{}s".format(round(delta.total_seconds(), 2))
+
+
+def check_url(url, validate=None):
+    try:
+        response = requests.get(
+            url if url.startswith("http") else "http://{}".format(url)
+        )
+
+    except requests.exceptions.SSLError:
+        raise LookupError("Wrong SSL Certificate")
+
+    except requests.exceptions.ConnectionError:
+        raise LookupError("Connection refused")
+
+    if validate:
+        is_valid = validate in response.text
+        return response.status_code, delta_to_str(response.elapsed), is_valid
+
+    return response.status_code, delta_to_str(response.elapsed)
+
+
+def print_status(element):
+    print("{} ".format(element).ljust(50, '.'), end=' ')
+
+    try:
+        if ';' in element:
+            code, delta, validity = check_url(*element.split(';'))
+        else:
+            code, delta = check_url(element)
+    except LookupError as e:
+        print(colored(e, "yellow"))
+        return
+
+    print(
+        colored(code, "green" if code == 200 else "red", attrs=['bold']),
+        end=' '
+    )
+    print(delta, end=' ')
+
+    try:
+        print(colored(
+            validity, "green" if validity else "red", attrs=['bold'],
+        ))
+    except NameError:
+        print("")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        urls = sys.argv[1:]
+    else:
+        urls = URLS.keys()
+
+    for element in urls:
+        if element in URLS:
+            print("\n", element, "\n", "------")
+            for url in URLS[element]:
+                print_status(url)
+
+        else:
+            print_status(element)
