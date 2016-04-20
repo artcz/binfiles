@@ -1,0 +1,3 @@
+#!/bin/bash
+
+acpi -V |grep -E 'Battery|Thermal'|grep -Ev 'temperature|mAh' |cut -d, -f 2,3 -|sed 's= degrees.*==' |  tr '\n' ' '
