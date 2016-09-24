@@ -1,0 +1,2 @@
+#!/bin/bash
+konsole --profile note_taking_app
