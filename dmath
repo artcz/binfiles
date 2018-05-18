@@ -22,31 +22,34 @@ from datetime import datetime, date, time, timedelta
 def parse_args():
     assert len(sys.argv) == 4
 
-    start = sys.argv[1]
-    op = sys.argv[2]
-    delta = sys.argv[3]
+    start, op, delta = sys.argv[1:]
 
     assert len(start) == 5 and start[2] == 'h'  # 19h30
-    assert op in ['+', '-']
+    assert op in '+', '-'
     assert delta.endswith('m')   # currently just minutes
 
-    start_t = time(*(int(x) for x in start.split('h')))
-    dt = datetime.combine(date.today(), start_t)
+    dt = datetime.combine(
+        date.today(),
+        time(*(int(x) for x in start.split('h')))
+    )
     op = {'+': operator.add, '-': operator.sub}[op]
     delta = timedelta(seconds=60*int(delta.rstrip('m')))
     return dt, op, delta
 
 
+def diff_days(result):
+    _days = (result.date() - start.date()).days
+
+    if _days > 0:
+        return "D+%s" % abs(_days)
+    elif _days < 0:
+        return "D-%s" % abs(_days)
+    return ""
+
+
 if __name__ == "__main__":
     start, op, delta = parse_args()
     result = op(start, delta)
-    diff_days = (result.date() - start.date()).days
-
-    if diff_days > 0:
-        D = "D+%s" % abs(diff_days)
-    elif diff_days < 0:
-        D = "D-%s" % abs(diff_days)
-    else:
-        D = ""
+    D = diff_days(result)
 
     print(result.time(), D)
