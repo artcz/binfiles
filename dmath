@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+"""
+DateTime math from the terminal.
+
+
+$ ./dmath.py 19h30 + 135m
+21:45:00
+$ ./dmath.py 19h30 + 235m
+23:25:00
+$ ./dmath.py 19h30 + 335m
+01:05:00 D+1
+
+"""
+
+import sys
+import operator
+from datetime import datetime, date, time, timedelta
+
+
+def parse_args():
+    assert len(sys.argv) == 4
+
+    start = sys.argv[1]
+    op = sys.argv[2]
+    delta = sys.argv[3]
+
+    assert len(start) == 5 and start[2] == 'h'  # 19h30
+    assert op in ['+', '-']
+    assert delta.endswith('m')   # currently just minutes
+
+    start_t = time(*(int(x) for x in start.split('h')))
+    dt = datetime.combine(date.today(), start_t)
+    op = {'+': operator.add, '-': operator.sub}[op]
+    delta = timedelta(seconds=60*int(delta.rstrip('m')))
+    return dt, op, delta
+
+
+if __name__ == "__main__":
+    start, op, delta = parse_args()
+    result = op(start, delta)
+    diff_days = (result.date() - start.date()).days
+
+    if diff_days > 0:
+        D = "D+%s" % abs(diff_days)
+    elif diff_days < 0:
+        D = "D-%s" % abs(diff_days)
+    else:
+        D = ""
+
+    print(result.time(), D)
