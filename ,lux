@@ -1,0 +1,20 @@
+#!/bin/bash
+MAX_BRIGHTNESS_FILE='/sys/class/backlight/intel_backlight/max_brightness'
+CURRENT_FILE='/sys/class/backlight/intel_backlight/actual_brightness'
+
+current_value="$(cat $CURRENT_FILE)"
+
+if [ $1 == "plus" ]; then
+    new_value=$(($current_value + 500))
+elif [ $1 == "minus" ]; then
+    new_value=$(($current_value - 500))
+else
+    new_value=$current_value
+fi
+
+
+echo "Max is $(cat $MAX_BRIGHTNESS_FILE), setting value: $new_value, was $current_value"
+
+
+BRIGHTNESS_CONTROL_FILE='/sys/class/backlight/intel_backlight/brightness'
+sudo sh -c "echo $new_value > $BRIGHTNESS_CONTROL_FILE"

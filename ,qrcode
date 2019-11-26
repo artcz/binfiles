@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+qrencode $1 -o /tmp/_Qrcode.png -s 10
+echo $1
+feh /tmp/_Qrcode.png
