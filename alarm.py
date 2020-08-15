@@ -3,7 +3,7 @@
 
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import gi
 
@@ -12,9 +12,11 @@ from gi.repository import Notify  # NOQA
 
 at, message = sys.argv[1], ' '.join(sys.argv[2:])
 
-hh, mm = at[:2], at[2:]
-
-alert_at = datetime.now().replace(hour=int(hh), minute=int(mm), second=0)
+if len(at) == 4:
+    hh, mm = at[:2], at[2:]
+    alert_at = datetime.now().replace(hour=int(hh), minute=int(mm), second=0)
+else:
+    alert_at = datetime.now() + timedelta(minutes=int(at))
 
 
 print(alert_at, message)
