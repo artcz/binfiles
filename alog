@@ -1,0 +1,9 @@
+#!/bin/bash
+
+UUNAME=$(cat /proc/sys/kernel/random/uuid)
+cd ~/commonplace/
+
+cat >> $UUNAME
+echo -e "\n\n\n#### $(date)" >> alog.md
+cat $UUNAME >> alog.md
+rm $UUNAME
